@@ -47,22 +47,46 @@ interface ResourceSliderProps {
 }
 
 function ResourceSlider({ label, value, max, unit, onChange }: ResourceSliderProps) {
+  const [inputValue, setInputValue] = useState(value.toString());
+
+  // Sync input value when slider changes
   const handleSliderChange = (values: number[]) => {
-    onChange(values[0]);
+    const newValue = values[0];
+    onChange(newValue);
+    setInputValue(newValue.toString());
   };
 
+  // Allow any input while typing
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = parseInt(e.target.value, 10);
-    if (!isNaN(newValue)) {
-      onChange(Math.min(Math.max(0, newValue), max));
+    setInputValue(e.target.value);
+  };
+
+  // Validate and apply on blur
+  const handleInputBlur = () => {
+    const numValue = parseInt(inputValue, 10);
+    if (isNaN(numValue) || inputValue.trim() === '') {
+      // Reset to current value if invalid
+      setInputValue(value.toString());
+    } else {
+      // Clamp to valid range
+      const clampedValue = Math.min(Math.max(0, numValue), max);
+      onChange(clampedValue);
+      setInputValue(clampedValue.toString());
+    }
+  };
+
+  // Apply on Enter key
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.currentTarget.blur();
     }
   };
 
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium">{label}</span>
-        <span className="text-xs text-muted-foreground">Max: {max} {unit}</span>
+        <span className="text-sm font-medium text-white">{label}</span>
+        <span className="text-xs text-white">Max: {max} {unit}</span>
       </div>
       <Slider
         value={[value]}
@@ -73,14 +97,14 @@ function ResourceSlider({ label, value, max, unit, onChange }: ResourceSliderPro
       />
       <div className="flex items-center gap-2">
         <Input
-          type="number"
-          value={value}
+          type="text"
+          value={inputValue}
           onChange={handleInputChange}
-          min={0}
-          max={max}
-          className="h-8 w-20"
+          onBlur={handleInputBlur}
+          onKeyDown={handleKeyDown}
+          className="h-8 w-20 text-white"
         />
-        <span className="text-sm text-muted-foreground">{unit}</span>
+        <span className="text-xs text-white">{unit}</span>
       </div>
     </div>
   );
@@ -91,14 +115,14 @@ function ResourceSlider({ label, value, max, unit, onChange }: ResourceSliderPro
 function DefaultRegionRenderer() {
   return (
     <div className="space-y-2">
-      <p className="text-sm text-muted-foreground">
+      <p className="text-sm text-white">
         Select a region for deployment
       </p>
       <div className="grid grid-cols-2 gap-2">
         {["US East", "US West", "EU West", "Asia Pacific"].map((region) => (
           <button
             key={region}
-            className="px-3 py-2 text-xs border rounded-md hover:bg-accent transition-colors"
+            className="px-3 py-2 text-xs text-white border rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
           >
             {region}
           </button>
@@ -108,7 +132,6 @@ function DefaultRegionRenderer() {
   );
 }
 
-// ============ Component ============
 
 /**
  * NodeFactory: A node with tabs for CPU, Memory, Disk, and Region configuration.
@@ -143,11 +166,11 @@ export function NodeFactory({ id, data, config }: NodeFactoryProps) {
       providerIcon={config.providerIcon ?? <Cloud className="h-4 w-4" />}
     >
       <Tabs value={currentTab} onValueChange={(v) => setCurrentTab(v as TabType)} className="w-full">
-        <TabsList className="grid w-full grid-cols-4 h-8">
-          <TabsTrigger value="cpu" className="text-xs">CPU</TabsTrigger>
-          <TabsTrigger value="memory" className="text-xs">Memory</TabsTrigger>
-          <TabsTrigger value="disk" className="text-xs">Disk</TabsTrigger>
-          <TabsTrigger value="region" className="text-xs">Region</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-4 h-8 bg-[#121726]">
+          <TabsTrigger value="cpu" className="text-xs text-white data-[state=active]:bg-white data-[state=active]:text-black">CPU</TabsTrigger>
+          <TabsTrigger value="memory" className="text-xs text-white data-[state=active]:bg-white data-[state=active]:text-black">Memory</TabsTrigger>
+          <TabsTrigger value="disk" className="text-xs text-white data-[state=active]:bg-white data-[state=active]:text-black">Disk</TabsTrigger>
+          <TabsTrigger value="region" className="text-xs text-white data-[state=active]:bg-white data-[state=active]:text-black">Region</TabsTrigger>
         </TabsList>
 
         <TabsContent value="cpu" className="mt-3">

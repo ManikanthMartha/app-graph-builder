@@ -11,32 +11,12 @@ import {
 } from '@xyflow/react';
 import { useStore, type CustomNode, type CustomNodeData } from './store';
 import { useShallow } from 'zustand/shallow';
-import { GitHubNode } from './nodes/GitHubNode';
-// import { LLMNode } from './nodes/llm';
-// import { OutputNode } from './nodes/out';
-// import { TextNode } from './nodes/text';
-// import { ImageNode } from './nodes/ImageNode';
-// import { ApiNode } from './nodes/ApiNode';
-// import { TranslatorNode } from './nodes/TranslatorNode';
-// import { ListNode } from './nodes/list';
-// import { EmailNode } from './nodes/EmailNode';
+import { nodeTypes } from './nodes/nodeTypes';
 
 import '@xyflow/react/dist/style.css';
 
-const gridSize = 20;
+const gridSize = 15;
 const proOptions = { hideAttribution: true };
-
-const nodeTypes = {
-  github: GitHubNode,
-  //   llm: LLMNode,
-  //   customOutput: OutputNode,
-  //   text: TextNode,
-  //   image: ImageNode,
-  //   api: ApiNode,
-  //   translator: TranslatorNode,
-  //   emailValidation: EmailNode,
-  // list: ListNode,
-};
 
 const getInitNodeData = (nodeID: string, type: string): CustomNodeData => {
   return {
@@ -100,7 +80,7 @@ const PipelineUIInner = () => {
   const hasNodes = nodes.length > 0;
   useEffect(() => {
     if (hasNodes) {
-      setTimeout(() => fitView({ padding: 0.2 }), 100);
+      setTimeout(() => fitView({ padding: 1.25 }), 100);
     }
   }, [hasNodes, fitView]);
 

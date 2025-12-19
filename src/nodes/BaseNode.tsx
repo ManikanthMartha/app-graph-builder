@@ -20,10 +20,10 @@ export interface BaseNodeProps {
   onSettingsClick?: () => void;
 }
 
-const statusConfig: Record<NodeStatus, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  healthy: { label: "Healthy", variant: "default" },
-  degraded: { label: "Degraded", variant: "secondary" },
-  down: { label: "Down", variant: "destructive" },
+const statusConfig: Record<NodeStatus, { label: string; className: string }> = {
+  healthy: { label: "Healthy", className: "bg-green-800 text-green-100" },
+  degraded: { label: "Degraded", className: "bg-yellow-600 text-white" },
+  down: { label: "Down", className: "bg-red-800 text-red-100" },
 };
 
 /**
@@ -46,23 +46,20 @@ export const BaseNode = memo<BaseNodeProps>(
 
     return (
       <div
-        className={`node-container bg-card rounded-lg border shadow-sm min-w-70 relative ${className}`}
+        className={`node-container bg-black rounded-lg shadow-sm min-w-80 relative ${className} p-4`}
         style={style}
       >
         {/* Header */}
-        <div className="flex items-center justify-between gap-3 p-3 border-b bg-muted/50 rounded-t-lg">
+        <div className="flex items-center justify-between gap-3 rounded-t-lg">
           <div className="flex items-center gap-2">
             {logo ?? <Server className="h-5 w-5 text-muted-foreground" />}
-            <span className="font-semibold text-sm">{title}</span>
+            <span className="font-semibold text-sm text-white">{title}</span>
           </div>
           <div className="flex items-center gap-2">
             {price && (
-              <span className="text-xs text-muted-foreground font-medium">
-                {price}
-              </span>
+              <span className="text-xs text-green-700 font-semibold border border-green-700 rounded p-1">{price} </span>
             )}
             <Button
-              variant="ghost"
               size="icon"
               className="h-7 w-7"
               onClick={onSettingsClick}
@@ -86,11 +83,11 @@ export const BaseNode = memo<BaseNodeProps>(
         />
 
         {/* Body / Content */}
-        <div className="p-3">{children}</div>
+        <div className="mt-6">{children}</div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between p-3 border-t bg-muted/30 rounded-b-lg">
-          <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
+        <div className="flex items-center justify-between mt-6">
+          <Badge className={`p-1 ${statusInfo.className} rounded-sm`}>{statusInfo.label}</Badge>
           {providerIcon && (
             <div className="flex items-center text-muted-foreground">
               {providerIcon}
