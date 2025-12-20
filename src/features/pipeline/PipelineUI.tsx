@@ -9,9 +9,12 @@ import {
   ReactFlowProvider,
   SmoothStepEdge,
 } from '@xyflow/react';
+import { useQuery } from '@tanstack/react-query';
+import { Loader2, AlertCircle } from 'lucide-react';
 import { useStore, type CustomNode, type CustomNodeData } from '../../store';
 import { useShallow } from 'zustand/shallow';
 import { nodeTypes } from '../../nodes/nodeTypes';
+import { fetchAppGraph } from '../../api/mockApi';
 
 import '@xyflow/react/dist/style.css';
 
@@ -43,6 +46,9 @@ const PipelineUIInner = () => {
     deleteSelectedNode,
     deleteEdge,
     setSelectedEdgeId,
+    setNodes,
+    setEdges,
+    selectedAppId,
     selectedNodeId,
     selectedEdgeId,
   } = useStore(
@@ -57,10 +63,43 @@ const PipelineUIInner = () => {
       deleteSelectedNode: state.deleteSelectedNode,
       deleteEdge: state.deleteEdge,
       setSelectedEdgeId: state.setSelectedEdgeId,
+      setNodes: state.setNodes,
+      setEdges: state.setEdges,
+      selectedAppId: state.selectedAppId,
       selectedNodeId: state.selectedNodeId,
       selectedEdgeId: state.selectedEdgeId,
     }))
   );
+
+  // Fetch graph data when selectedAppId changes
+  const {
+    data: graphData,
+    isLoading: isGraphLoading,
+    isError: isGraphError,
+    error: graphError,
+    refetch: refetchGraph,
+  } = useQuery({
+    queryKey: ['appGraph', selectedAppId],
+    queryFn: () => fetchAppGraph(selectedAppId!),
+    enabled: !!selectedAppId,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // Update store when graph data changes
+  useEffect(() => {
+    if (graphData) {
+      setNodes(graphData.nodes);
+      setEdges(graphData.edges);
+    }
+  }, [graphData, setNodes, setEdges]);
+
+  // Clear graph when no app is selected
+  useEffect(() => {
+    if (!selectedAppId) {
+      setNodes([]);
+      setEdges([]);
+    }
+  }, [selectedAppId, setNodes, setEdges]);
 
   // Handle keyboard delete
   useEffect(() => {
@@ -134,6 +173,55 @@ const PipelineUIInner = () => {
     event.preventDefault();
     event.dataTransfer.dropEffect = 'move';
   }, []);
+
+  // Loading state
+  if (isGraphLoading && selectedAppId) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-[#141414]">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
+          <p className="text-neutral-400 text-sm">Loading graph...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (isGraphError && selectedAppId) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-[#141414]">
+        <div className="flex flex-col items-center gap-3 max-w-md text-center">
+          <AlertCircle className="w-10 h-10 text-red-500" />
+          <p className="text-red-400 text-sm">
+            {graphError instanceof Error ? graphError.message : 'Failed to load graph'}
+          </p>
+          <button
+            onClick={() => refetchGraph()}
+            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-md text-sm text-white transition-colors"
+          >
+            Try again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Empty state - no app selected
+  if (!selectedAppId) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-[#141414]">
+        <div className="flex flex-col items-center gap-3 text-center">
+          <div className="w-16 h-16 rounded-full bg-neutral-800 flex items-center justify-center">
+            <svg className="w-8 h-8 text-neutral-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+            </svg>
+          </div>
+          <p className="text-neutral-400 text-sm">Select an app to view its graph</p>
+          <p className="text-neutral-600 text-xs">Use the dropdown above to choose an app</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div ref={reactFlowWrapper} className="w-full h-full">
