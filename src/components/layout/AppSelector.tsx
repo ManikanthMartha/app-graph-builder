@@ -83,7 +83,7 @@ export const AppSelector = () => {
       {/* Trigger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2 bg-neutral-900 border border-neutral-700 rounded-lg hover:bg-neutral-800 transition-colors min-w-[220px]"
+        className="flex items-center gap-2 px-4 py-2 bg-neutral-900 border border-neutral-700 rounded-lg hover:bg-neutral-800 transition-colors min-w-55"
       >
         <LayoutGrid className="w-4 h-4 text-neutral-400" />
         <span className="flex-1 text-left text-sm text-white truncate">
@@ -156,7 +156,7 @@ export const AppSelector = () => {
           )}
 
           {/* App List */}
-          <div className="max-h-[280px] overflow-y-auto">
+          <div className="max-h-70 overflow-y-auto">
             {isLoading ? (
               <div className="flex items-center justify-center py-8">
                 <Loader2 className="w-6 h-6 animate-spin text-indigo-500" />

@@ -1,73 +1,77 @@
-# React + TypeScript + Vite
+# App Graph Builder
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A visual graph-based application builder for designing and managing infrastructure/service architectures. Built with React, TypeScript, and React Flow.
 
-Currently, two official plugins are available:
+![App Graph Builder](https://img.shields.io/badge/React-19-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue) ![Vite](https://img.shields.io/badge/Vite-7-purple)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Quick Start
 
-## React Compiler
+### Prerequisites
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Node.js 18+ 
+- npm or yarn
 
-## Expanding the ESLint configuration
+### Installation
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+```bash
+# Clone the repository
+git clone https://github.com/ManikanthMartha/app-graph-builder.git
+cd app-graph-builder
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+# Install dependencies
+npm install
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Start development server
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Available Scripts
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Type check and build for production |
+| `npm run lint` | Run ESLint |
+| `npm run typecheck` | Run TypeScript type checking |
+| `npm run preview` | Preview production build |
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## ✨ Features
+
+- **Visual Graph Editor** - Drag-and-drop nodes to build application architectures
+- **Multiple Node Types** - GitHub, Docker, PostgreSQL, Redis, MongoDB nodes
+- **App Management** - Create, switch between, and manage multiple graphs
+- **Real-time Connections** - Connect nodes with animated edges
+- **Keyboard Shortcuts** - Delete nodes/edges with Backspace/Delete keys
+
+## 🔧 Key Technical Decisions
+
+1. **React Flow** - Industry-standard library for node-based UIs
+2. **Zustand** - Lightweight state management without boilerplate
+3. **TanStack Query** - Server state management with caching
+4. **Tailwind CSS v4** - Utility-first styling with new CSS-first config
+5. **Mock API** - In-memory data with simulated latency for realistic behavior
+
+## ⚠️ Known Limitations
+
+- **No persistence** - Data is stored in memory; refreshing clears all changes
+- **No real backend** - Uses mock API with simulated delays
+- **Limited node types** - Currently supports 5 infrastructure node types
+- **No collaboration** - Single-user experience only
+- **No undo/redo** - Changes cannot be reverted
+
+## 📁 Project Structure
+
+```
+src/
+├── api/           # Mock API endpoints
+├── components/    # Reusable UI components
+│   ├── draggable/ # Drag-and-drop components
+│   ├── layout/    # Layout components (Toolbar, AppSelector)
+│   └── ui/        # Base UI primitives
+├── features/      # Feature modules
+│   └── pipeline/  # Main graph editor
+├── icons/         # SVG icon components
+├── nodes/         # Node type definitions
+├── store/         # Zustand state management
+└── styles/        # Global CSS
 ```
