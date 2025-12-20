@@ -41,6 +41,7 @@ export type InspectorTab = 'config' | 'runtime';
 interface UIState {
   selectedAppId: string | null;
   selectedNodeId: string | null;
+  selectedEdgeId: string | null;
   isMobilePanelOpen: boolean;
   activeInspectorTab: InspectorTab;
 }
@@ -56,6 +57,7 @@ interface ReactFlowState {
 interface UIActions {
   setSelectedAppId: (appId: string | null) => void;
   setSelectedNodeId: (nodeId: string | null) => void;
+  setSelectedEdgeId: (edgeId: string | null) => void;
   setMobilePanelOpen: (isOpen: boolean) => void;
   toggleMobilePanel: () => void;
   setActiveInspectorTab: (tab: InspectorTab) => void;
@@ -71,6 +73,7 @@ interface ReactFlowActions {
   setNodes: (nodes: CustomNode[]) => void;
   setEdges: (edges: CustomEdge[]) => void;
   deleteSelectedNode: () => void;
+  deleteEdge: (edgeId: string) => void;
   clearGraph: () => void;
 }
 
@@ -88,6 +91,7 @@ export const useStore = create<AppStore>((set, get) => ({
   // -------- UI State --------
   selectedAppId: null,
   selectedNodeId: null,
+  selectedEdgeId: null,
   isMobilePanelOpen: false,
   activeInspectorTab: 'config',
 
@@ -103,6 +107,10 @@ export const useStore = create<AppStore>((set, get) => ({
 
   setSelectedNodeId: (nodeId) => {
     set({ selectedNodeId: nodeId });
+  },
+
+  setSelectedEdgeId: (edgeId) => {
+    set({ selectedEdgeId: edgeId });
   },
 
   setMobilePanelOpen: (isOpen) => {
@@ -214,6 +222,12 @@ export const useStore = create<AppStore>((set, get) => ({
         (edge) => edge.source !== selectedNodeId && edge.target !== selectedNodeId
       ),
       selectedNodeId: null,
+    });
+  },
+
+  deleteEdge: (edgeId) => {
+    set({
+      edges: get().edges.filter((edge) => edge.id !== edgeId),
     });
   },
 

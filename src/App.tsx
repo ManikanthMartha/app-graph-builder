@@ -1,5 +1,5 @@
-import { PipelineUI } from './PipelineUI'
-import { PipelineToolbar } from './Toolbar'
+import { PipelineUI } from './features/pipeline/PipelineUI'
+import { PipelineToolbar } from './components/layout/Toolbar'
 
 const App = () => {
   return (

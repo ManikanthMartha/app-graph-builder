@@ -9,9 +9,9 @@ import {
   ReactFlowProvider,
   SmoothStepEdge,
 } from '@xyflow/react';
-import { useStore, type CustomNode, type CustomNodeData } from './store';
+import { useStore, type CustomNode, type CustomNodeData } from '../../store';
 import { useShallow } from 'zustand/shallow';
-import { nodeTypes } from './nodes/nodeTypes';
+import { nodeTypes } from '../../nodes/nodeTypes';
 
 import '@xyflow/react/dist/style.css';
 
@@ -41,7 +41,10 @@ const PipelineUIInner = () => {
     onEdgesChange,
     onConnect,
     deleteSelectedNode,
+    deleteEdge,
+    setSelectedEdgeId,
     selectedNodeId,
+    selectedEdgeId,
   } = useStore(
     useShallow((state) => ({
       nodes: state.nodes,
@@ -52,21 +55,29 @@ const PipelineUIInner = () => {
       onEdgesChange: state.onEdgesChange,
       onConnect: state.onConnect,
       deleteSelectedNode: state.deleteSelectedNode,
+      deleteEdge: state.deleteEdge,
+      setSelectedEdgeId: state.setSelectedEdgeId,
       selectedNodeId: state.selectedNodeId,
+      selectedEdgeId: state.selectedEdgeId,
     }))
   );
 
   // Handle keyboard delete
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if ((event.key === 'Delete' || event.key === 'Backspace') && selectedNodeId) {
+      if (event.key === 'Delete' || event.key === 'Backspace') {
         // Prevent deletion when typing in inputs
         const target = event.target as HTMLElement;
         if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
           return;
         }
         event.preventDefault();
-        deleteSelectedNode();
+        
+        if (selectedNodeId) {
+          deleteSelectedNode();
+        } else if (selectedEdgeId) {
+          deleteEdge(selectedEdgeId);
+        }
       }
     };
 
@@ -74,7 +85,7 @@ const PipelineUIInner = () => {
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [selectedNodeId, deleteSelectedNode]);
+  }, [selectedNodeId, selectedEdgeId, deleteSelectedNode, deleteEdge]);
 
   // Fit view on initial load when nodes are present
   const hasNodes = nodes.length > 0;
@@ -132,6 +143,13 @@ const PipelineUIInner = () => {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onEdgeClick={(event, edge) => {
+          event.stopPropagation();
+          setSelectedEdgeId(edge.id);
+        }}
+        onPaneClick={() => {
+          setSelectedEdgeId(null);
+        }}
         onDrop={onDrop}
         onDragOver={onDragOver}
         nodeTypes={nodeTypes}

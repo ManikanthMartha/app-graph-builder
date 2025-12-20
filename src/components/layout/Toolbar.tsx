@@ -1,11 +1,11 @@
 import type { ComponentType } from "react";
-import { DraggableNode } from "./draggableNode";
-import { NODE_CONFIGS } from "./nodes/nodeConfigs";
-import { GithubIcon } from "./icons/GithubIcon";
-import { PostgresIcon } from "./icons/PostgresIcon";
-import { DockerIcon } from "./icons/DockerIcon";
-import { RedisIcon } from "./icons/RedisIcon";
-import { MongoIcon } from "./icons/MongoIcon";
+import { DraggableNode } from "../draggable/DraggableNode";
+import { NODE_CONFIGS } from "../../nodes/nodeConfigs";
+import { GithubIcon } from "../../icons/GithubIcon";
+import { PostgresIcon } from "../../icons/PostgresIcon";
+import { DockerIcon } from "../../icons/DockerIcon";
+import { RedisIcon } from "../../icons/RedisIcon";
+import { MongoIcon } from "../../icons/MongoIcon";
 
 // ============ Icon Registry ============
 
